@@ -1,0 +1,25 @@
+{
+  "name": "employeetracker",
+  "version": "1.0.0",
+  "description": "Creating an application that will help track employee information",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JesusFernandoRios/EmployeeTracker.git"
+  },
+  "author": "Jesus Rios",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/JesusFernandoRios/EmployeeTracker/issues"
+  },
+  "homepage": "https://github.com/JesusFernandoRios/EmployeeTracker#readme",
+  "dependencies": {
+    "console.table": "^0.10.0",
+    "inquirer": "^7.3.3",
+    "mysql": "^2.18.1"
+  }
+}
