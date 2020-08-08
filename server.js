@@ -1,6 +1,7 @@
 const mysql = require('mysql');
 const inquirer = require('inquirer');
 const cTable = require('console.table');
+const Choices = require('inquirer/lib/objects/choices');
 
 
 // Starting Database Connection 
@@ -33,6 +34,12 @@ function start() {
         }
         else if(answer.main_menu === 'Add a Department, Role or Employee'){
             return choiceTwo();
+        }
+        else if(answer.main_menu === 'Update Employee roles and Management'){
+            return choiceThree();
+        }
+        else if(answer.main_menu === 'Delete Departments, roles or Employee Data'){
+            return choiceFour();
         }
     });
 }
@@ -237,7 +244,77 @@ function choiceTwo() {
 }
 
 function choiceThree() {
+    
+    inquirer.prompt([
+        {
 
+        }
+    ])
+}
+
+function choiceFour() {
+
+    inquirer.prompt({
+        name:'delete',
+        type:'list',
+        message:'Select what you would like to Delete',
+        choices:['Departments', 'Roles', 'Employees', 'Return']
+    }).then(function(answer){
+
+        console.log(answer);
+
+        if(answer.delete === 'Departments'){
+
+            connection.query("SELECT * FROM department", (err, results) =>{
+                if(err) throw err
+                
+                console.table(results);
+
+                inquirer.prompt({
+                    name:'select',
+                    type:'input',
+                    message:'Type the desired Department to be deleted'
+                }).then(function(answer){
+                    console.log(answer)
+
+                    connection.query('DELETE FROM department WHERE Dept_Name =?;',[answer.select],(err, results) =>{
+                        if(err) throw err;
+                        
+                        console.table(results);
+                        console.log('Department had been deleted!')
+
+                        choiceFour();
+                    })
+                })
+                
+            })
+        }
+        else if(answer.delete === 'Roles'){
+
+            connection.query('SELECT * FROM emp_role', (err,results) =>{
+                if(err) throw err;
+
+                console.table(results);
+
+                inquirer.prompt({
+                    name:'select',
+                    type:'input',
+                    message:'Type the desired Role to be deleted'
+                }).then(function(answer){
+                    console.log(answer)
+
+                    connection.query('DELETE FROM emp_role WHERE title =?;',[answer.select],(err, results) =>{
+                        if(err) throw err;
+                        
+                        console.table(results);
+                        console.log('Employee Role had been deleted!')
+
+                        choiceFour();
+                    })
+                })
+            })
+        }
+    })
 }
 
 connection.connect(function(err){
