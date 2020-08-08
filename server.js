@@ -56,7 +56,7 @@ function start() {
 // }
 
 // THIS FUNCTION CONTROLS THE PROMPTS FOR CHOICE ONE OF START FUNCTION
-function choiceOne (){
+function choiceOne(){
     inquirer.prompt({
         name:'tableList',
         type:'list',
@@ -132,6 +132,8 @@ function choiceTwo() {
                             console.table(results)
 
                             console.log('Departments Updated!')
+
+                            choiceTwo();
                         })
                     }
                     else{
@@ -175,8 +177,13 @@ function choiceTwo() {
                                 if(err) throw err
     
                                 connection.query('SELECT * FROM emp_role', (err, results) => {
+                                    if(err) throw err;
+
                                     console.table(results)
+
                                     console.log('New Employee Position has been created!')
+
+                                    choiceTwo();
 
                                 })
                             })
@@ -187,7 +194,50 @@ function choiceTwo() {
                 
             })
         }
+        else if(answer.add === 'Employee'){
+            
+            inquirer.prompt([
+                {
+                    name:'first',
+                    type:'input',
+                    message:'Please Enter New Employees first Name.'
+                },
+                {
+                    name:'last',
+                    type:'input',
+                    message:'Enter Last Name.'
+                },
+                {
+                    name:'role',
+                    type:'number',
+                    message:'Enter Role ID.'
+                },
+            ]).then(function(answer){
+                console.log(answer);
+
+                connection.query('INSERT INTO employee (First_Name, Last_Name, Role_ID) VALUES (?,?,?)', [answer.first, answer.last, answer.role], (err, results)=>{
+                    if(err) throw err;
+
+                    connection.query('SELECT First_Name, Last_Name FROM employee',(err, results)=> {
+                        if(err) throw err;
+
+                        console.table(results)
+
+                        console.log('New Employee Added!')
+
+                        choiceTwo();
+                    })
+                })
+            })
+        }
+        else if(answer.add === 'Return'){
+            return start();
+        }
     })
+}
+
+function choiceThree() {
+
 }
 
 connection.connect(function(err){
