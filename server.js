@@ -27,7 +27,6 @@ function start() {
         message: 'What would you like to do?',
         choices: ['View Departments, Roles and Employees', 'Add a Department, Role or Employee', 'Update Employee roles and Management', 'Delete Departments, roles or Employee Data']
     }).then(function(answer){
-        console.log(answer)
 
         if(answer.main_menu === 'View Departments, Roles and Employees'){
             return choiceOne();
@@ -44,24 +43,6 @@ function start() {
     });
 }
 
-// function redo (){
-//     inquirer.prompt({
-//         name:'redo',
-//         type:'list',
-//         message:'What would you like to do next?',
-//         choices: ['Go to Main Menu', 'Back']
-//     }).then(function(answer){
-//         console.log(answer)
-
-//         if(answer.redo === 'Go to Main Menu'){
-//             return start();
-//         }
-//         else if(answer.redo === 'Back'){
-//             if(answer)
-//         }
-//     })
-// }
-
 // THIS FUNCTION CONTROLS THE PROMPTS FOR CHOICE ONE OF START FUNCTION
 function choiceOne(){
     inquirer.prompt({
@@ -70,7 +51,7 @@ function choiceOne(){
         message:'Please select the option you would like to see',
         choices:['Departments','Employee Roles','Employees','Return']
     }).then(function(answer){
-        console.log(answer)
+        
         if(answer.tableList === 'Departments'){
             
             connection.query('SELECT * FROM department', (err, results) => {
@@ -115,7 +96,6 @@ function choiceTwo() {
         message:'Please select the category you would like to add data to',
         choices:['Departments', 'Role', 'Employee','Return']
     }).then(function(answer){
-        console.log(answer);
 
         if(answer.add === 'Departments'){
             
@@ -247,7 +227,7 @@ function choiceThree() {
     
     inquirer.prompt([
         {
-
+            
         }
     ])
 }
@@ -298,12 +278,12 @@ function choiceFour() {
 
                 inquirer.prompt({
                     name:'select',
-                    type:'input',
-                    message:'Type the desired Role to be deleted'
+                    type:'number',
+                    message:'Type the desired Role to be deleted by ID'
                 }).then(function(answer){
                     console.log(answer)
 
-                    connection.query('DELETE FROM emp_role WHERE title =?;',[answer.select],(err, results) =>{
+                    connection.query('DELETE FROM emp_role WHERE id =?;',[answer.select],(err, results) =>{
                         if(err) throw err;
                         
                         console.table(results);
@@ -313,6 +293,34 @@ function choiceFour() {
                     })
                 })
             })
+        }
+        else if(answer.delete === 'Employees'){
+
+            connection.query('SELECT * FROM employee', (err, results) =>{
+                if(err) throw err;
+
+                console.table(results);
+
+                inquirer.prompt({
+                    name:'select',
+                    type:'number',
+                    message:'Enter the employee you would like to delete by ID'
+                }).then(function(answer){
+
+                    connection.query('DELETE FROM employee WHERE id = ?;',[answer.select], (err, results) =>{
+                        if(err) throw err;
+
+                        console.table(results);
+                        console.log('Employee has been deleted')
+
+                        choiceFour();
+                    })
+                })
+
+            })
+        }
+        else if(answer.delete === 'Return'){
+            return start();
         }
     })
 }
