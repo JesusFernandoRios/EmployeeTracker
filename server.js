@@ -25,7 +25,7 @@ function start() {
         name: 'main_menu',
         type: 'list',
         message: 'What would you like to do?',
-        choices: ['View Departments, Roles and Employees', 'Add a Department, Role or Employee', 'Update Employee roles and Management', 'Delete Departments, roles or Employee Data']
+        choices: ['View Departments, Roles and Employees', 'Add a Department, Role or Employee', 'Update Employee role', 'Delete Departments, roles or Employee Data']
     }).then(function(answer){
 
         if(answer.main_menu === 'View Departments, Roles and Employees'){
@@ -34,7 +34,7 @@ function start() {
         else if(answer.main_menu === 'Add a Department, Role or Employee'){
             return choiceTwo();
         }
-        else if(answer.main_menu === 'Update Employee roles and Management'){
+        else if(answer.main_menu === 'Update Employee role'){
             return choiceThree();
         }
         else if(answer.main_menu === 'Delete Departments, roles or Employee Data'){
@@ -225,11 +225,44 @@ function choiceTwo() {
 
 function choiceThree() {
     
-    inquirer.prompt([
+    connection.query("SELECT * FROM employee", (err, results) =>{
+        if(err) throw err;
+
+        console.table(results)
+
+        inquirer.prompt([
         {
-            
+            name:'update',
+            type:'number',
+            message:'Select (by ID) the employee you would like to Update.'
+        },
+        {
+            name:'role',
+            type:'number',
+            message:'Now input the department ID you wish to assign to employee.'
         }
-    ])
+        ])
+        .then(function(answer){
+            
+            connection.query("UPDATE employee SET Role_ID = ? WHERE id = ?;",[answer.role, answer.update], (err, results) =>{
+                if(err) throw err;
+
+                connection.query('SELECT id, First_Name, Last_Name, Role_ID FROM employee WHERE id = ?;',[answer.update],(err, results) =>{
+                    if(err) throw err;
+                    
+                    console.table(results)
+
+                    console.log('Employee has been Updated!')
+
+                    start();
+                })
+                
+            })
+            
+        })
+
+    })
+    
 }
 
 function choiceFour() {
